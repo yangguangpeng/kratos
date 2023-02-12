@@ -3,6 +3,7 @@ package biz
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	"strconv"
 )
 
 type Demo struct {
@@ -27,6 +28,6 @@ func NewDemoUsecase(repo DemoRepo, logger log.Logger) *DemoUsecase {
 //实现业务逻辑的层
 func (du *DemoUsecase) GetFormation(ctx context.Context, userID int64) (string, error) {
 	demo,err := du.repo.FindByID(ctx, userID)
-	ret := `userID:`+string(userID)+`,年龄：`+ string(demo.Age)
+	ret := `userID:`+ strconv.Itoa(int(userID)) +`,年龄：`+ strconv.Itoa(int(demo.Age))
 	return ret, err
 }
