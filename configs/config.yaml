@@ -6,7 +6,7 @@ server:
     addr: 0.0.0.0:8080
     timeout: 1s
 data:
-  database:s
+  database:
     driver: mysql
     source: root:root@tcp(127.0.0.1:3306)/test
   redis:
