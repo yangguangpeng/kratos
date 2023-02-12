@@ -3,6 +3,7 @@ package data
 import (
 	"gorm.io/gorm"
 	"helloworld/internal/conf"
+	"helloworld/internal/data/redis"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
@@ -15,6 +16,7 @@ var ProviderSet = wire.NewSet(NewData, NewGreeterRepo, NewDemoRepo)
 type Data struct {
 	// TODO wrapped database client
 	db       *gorm.DB
+	redisCache    *redis.Base
 }
 
 // NewData .
@@ -39,7 +41,16 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 		l.Errorf("gorm err %v ", err)
 		return nil, nil, err
 	}
+
+	redisCache, err1 := redis.NewBase(c.Redis)
+
+	if err != nil {
+		l.Errorf("redis err %v ", err1)
+		return nil, nil, err1
+	}
+
 	return &Data{
 		db:db,
+		redisCache:redisCache,
 	}, cleanup, nil
 }
