@@ -2,9 +2,9 @@ package data
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/gomodule/redigo/redis"
+	v1 "helloworld/api/helloworld/v1"
 	"helloworld/internal/biz"
 	"helloworld/internal/data/model"
 	"strconv"
@@ -21,20 +21,22 @@ func (d *demoRepo) FindByID(c context.Context, userID int64) (*biz.Demo, error) 
 	d.data.redisCache.KeyName = `userID:`+strconv.Itoa(int(userID))
 	age,err := redis.Int(d.data.redisCache.Get())
 
-	fmt.Println(age,"打印redis结果")
 	var retAge int8
 	retAge = 0
 
 	if err == nil {
 		retAge = int8(age)
-	}else {
+	} else {
 		userInfo, _ := model.UsersMgr(d.data.db).FetchByPrimaryKey(uint32(userID))
+		if userInfo.Age == 0 {
+			return &biz.Demo{}, v1.ErrorUserNotFound(`user %s not found`,strconv.Itoa(int(userID)))
+		}
 		retAge = userInfo.Age
 	}
 
 	return &biz.Demo{
 		Age: retAge,
-	}, err
+	}, nil
 }
 
 // NewDemoRepo .
