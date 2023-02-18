@@ -51,7 +51,8 @@ func main() {
 	flag.Parse()
 	logger := log.With(log.NewStdLogger(os.Stdout),
 		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
+		"defaultCaller", log.DefaultCaller,
+		"caller", log.Caller,
 		"service.id", id,
 		"service.name", Name,
 		"service.version", Version,

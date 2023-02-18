@@ -17,6 +17,7 @@ type demoRepo struct {
 
 
 func (d *demoRepo) FindByID(c context.Context, userID int64) (*biz.Demo, error) {
+	d.log.Info(`请求参数`+strconv.Itoa(int(userID)))
 	//规范处理，写个拼接名称
 	d.data.redisCache.KeyName = `userID:`+strconv.Itoa(int(userID))
 	age,err := redis.Int(d.data.redisCache.Get())
