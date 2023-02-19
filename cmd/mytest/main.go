@@ -9,24 +9,12 @@ import (
 	pb "helloworld/api/helloworld/v1"
 )
 
-func main()  {
-	testKey := `testKey`
-	con, _ := grpc.DialInsecure(
-		context.Background(),
-		grpc.WithEndpoint("127.0.0.1:8080"),
-		grpc.WithMiddleware(
-			jwt.Client(func(token *jwtv4.Token) (interface{}, error) {
-				return []byte(testKey), nil
-			}),
-		),
-	)
-	demoClient := pb.NewDemoClient(con)
-	reply,err := demoClient.GetDemo(context.Background(), &pb.GetDemoRequest{UserId: 2})
-	log.Infow(`reply`,reply,`err`,err)
+func main() {
+	grpcAuthDemo()
 }
 
 //golang的grpc例子与中间件jwt认证例子
-func grpcAuthDemo (){
+func grpcAuthDemo() {
 	testKey := `testKey`
 	con, _ := grpc.DialInsecure(
 		context.Background(),
@@ -38,6 +26,6 @@ func grpcAuthDemo (){
 		),
 	)
 	demoClient := pb.NewDemoClient(con)
-	reply,err := demoClient.GetDemo(context.Background(), &pb.GetDemoRequest{UserId: 2})
-	log.Infow(`reply`,reply,`err`,err)
+	reply, err := demoClient.GetDemo(context.Background(), &pb.GetDemoRequest{UserId: 2})
+	log.Infow(`reply`, reply, `err`, err)
 }

@@ -1,10 +1,13 @@
 package server
 
 import (
+	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	jwtv4 "github.com/golang-jwt/jwt/v4"
 	v1 "helloworld/api/helloworld/v1"
@@ -22,6 +25,7 @@ func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, demo *servic
 			jwt.Server(func(token *jwtv4.Token) (interface{}, error) {
 				return []byte(testKey), nil
 			}),
+			MyMiddleware(),
 		),
 	}
 	if c.Grpc.Network != "" {
@@ -37,4 +41,21 @@ func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, demo *servic
 	v1.RegisterGreeterServer(srv, greeter)
 	v1.RegisterDemoServer(srv, demo)
 	return srv
+}
+
+//MyMiddleware 自定义中间件
+func MyMiddleware() middleware.Middleware {
+	return func(handler middleware.Handler) middleware.Handler {
+		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
+			log.Info(`MyMiddleware 开始`)
+
+			if ServerContext, ok := transport.FromServerContext(ctx); ok {
+				authorization := ServerContext.RequestHeader().Get(`Authorization`)
+				log.Infow(`MyMiddleware print: 请求的认证信息`, authorization)
+			}
+			log.Info(`MyMiddleware 结束`)
+
+			return handler(ctx, req)
+		}
+	}
 }
