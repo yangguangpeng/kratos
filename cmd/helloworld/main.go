@@ -37,6 +37,7 @@ func init() {
 }
 
 func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, reg *consul.Registry) *kratos.App {
+	Name = `myHello`
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),

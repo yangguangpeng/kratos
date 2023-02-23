@@ -15,6 +15,25 @@ import (
 
 func main() {
 
+	// new consul client
+	client, err := api.NewClient(api.DefaultConfig())
+	if err != nil {
+		panic(err)
+	}
+	// new dis with consul client
+	dis := consul.New(client)
+
+	endpoint := "discovery:///myHello"
+	conn, err := grpc.DialInsecure(context.Background(), grpc.WithEndpoint(endpoint), grpc.WithDiscovery(dis))
+	if err != nil {
+		panic(err)
+	}
+	demoClient := pb.NewDemoClient(conn)
+	reply, err := demoClient.GetDemo(context.Background(), &pb.GetDemoRequest{UserId: 1})
+	log.Infow(`reply`, reply, `err`, err)
+}
+
+func balanceDemo() {
 	// 创建路由 Filter：筛选版本号为"2.0.0"的实例
 	filter := filter.Version("2.0.0")
 	client, err := api.NewClient(api.DefaultConfig())
