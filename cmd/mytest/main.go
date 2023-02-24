@@ -6,7 +6,11 @@ import (
 	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
+	"github.com/go-kratos/kratos/v2/selector"
 	"github.com/go-kratos/kratos/v2/selector/filter"
+	"github.com/go-kratos/kratos/v2/selector/p2c"
+	"github.com/go-kratos/kratos/v2/selector/random"
+	"github.com/go-kratos/kratos/v2/selector/wrr"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	jwtv4 "github.com/golang-jwt/jwt/v4"
 	"github.com/hashicorp/consul/api"
@@ -14,6 +18,10 @@ import (
 )
 
 func main() {
+
+	selector.SetGlobalSelector(p2c.NewBuilder())
+	selector.SetGlobalSelector(random.NewBuilder())
+	selector.SetGlobalSelector(wrr.NewBuilder())
 
 	// new consul client
 	client, err := api.NewClient(api.DefaultConfig())
