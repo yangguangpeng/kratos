@@ -2,10 +2,6 @@ package main
 
 import (
 	"flag"
-	"os"
-
-	"helloworld/internal/conf"
-
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -13,6 +9,8 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"helloworld/internal/conf"
+	"os"
 
 	_ "go.uber.org/automaxprocs"
 
@@ -37,7 +35,6 @@ func init() {
 }
 
 func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, reg *consul.Registry) *kratos.App {
-	Name = `myHello`
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -62,6 +59,9 @@ func main() {
 	//if err != nil {
 	//	return
 	//}
+
+	Name = `myHello`
+	id = `myHello-1`
 
 	// new consul client
 	client, err := api.NewClient(api.DefaultConfig())

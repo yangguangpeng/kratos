@@ -13,7 +13,7 @@ type DemoService struct {
 }
 
 func NewDemoService(DemoUsecase *biz.DemoUsecase) *DemoService {
-	return &DemoService{du:DemoUsecase}
+	return &DemoService{du: DemoUsecase}
 }
 
 func (s *DemoService) CreateDemo(ctx context.Context, req *pb.CreateDemoRequest) (*pb.CreateDemoReply, error) {
@@ -26,8 +26,8 @@ func (s *DemoService) DeleteDemo(ctx context.Context, req *pb.DeleteDemoRequest)
 	return &pb.DeleteDemoReply{}, nil
 }
 func (s *DemoService) GetDemo(ctx context.Context, req *pb.GetDemoRequest) (*pb.GetDemoReply, error) {
-	result,err := s.du.GetFormation(ctx, req.UserId)
-	return &pb.GetDemoReply{Result: result}, err
+	result, err := s.du.GetFormation(ctx, req.UserId)
+	return &pb.GetDemoReply{Result: result + `80`}, err
 }
 func (s *DemoService) ListDemo(ctx context.Context, req *pb.ListDemoRequest) (*pb.ListDemoReply, error) {
 	return &pb.ListDemoReply{}, nil
