@@ -3,6 +3,7 @@ syntax = "proto3";
 package api.helloworld.v1;
 
 import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "helloworld/api/helloworld/v1;v1";
 option java_multiple_files = true;
@@ -31,10 +32,27 @@ message DeleteDemoReply {}
 
 message GetDemoRequest {
     // ID
-    int64 user_id = 1;
+    int64 user_id = 1[(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+			pattern: "^[0-9]$",
+			description: "用户id",
+			format: "integer",
+			default: "2",
+			required: [
+				"user_id"
+			]
+		}];
 }
+
 message GetDemoReply {
-    string result = 1;
+    string result = 1 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+			description: "返回信息",
+			format: "string",
+			default: "ok",
+			example: "\"这是示例的返回信息\"",
+			required: [
+				"result"
+			]
+		}];
 }
 
 message ListDemoRequest {}
