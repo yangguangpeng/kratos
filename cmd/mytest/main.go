@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/getsentry/sentry-go"
 	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
@@ -17,6 +18,15 @@ import (
 
 func main() {
 
+}
+
+//sentry demo
+func sentryDemo () {
+	sentry.Init(sentry.ClientOptions{
+		Dsn: "http://1004bd2729014b07b8e5fef2e31d2ba5@192.168.10.126:9000/1",
+		AttachStacktrace: true, // recommended
+	})
+	sentry.CaptureMessage(`主动推送`)
 }
 
 //服务发现与负载均衡
