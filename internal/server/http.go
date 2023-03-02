@@ -4,7 +4,7 @@ import (
 	v1 "helloworld/api/helloworld/v1"
 	"helloworld/internal/conf"
 	"helloworld/internal/service"
-
+	sentrykratos "github.com/go-kratos/sentry"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/http"
@@ -15,6 +15,7 @@ func NewHTTPServer(c *conf.Server, greeter *service.GreeterService, Demo *servic
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
+			sentrykratos.Server(), // must after Recovery middleware, because of the exiting order will be reversed
 		),
 	}
 	if c.Http.Network != "" {
