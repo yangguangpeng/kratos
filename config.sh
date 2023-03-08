@@ -1,0 +1,1 @@
+protoc --proto_path=third_party --proto_path=internal/conf/ --go_out=. internal/conf/*.proto

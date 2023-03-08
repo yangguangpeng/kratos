@@ -1,71 +1,75 @@
 package main
 
 import (
-	"context"
-	"github.com/getsentry/sentry-go"
-	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
+	"fmt"
+	"github.com/go-kratos/kratos/contrib/config/apollo/v2"
+	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
-	"github.com/go-kratos/kratos/v2/selector"
-	"github.com/go-kratos/kratos/v2/selector/p2c"
-	"github.com/go-kratos/kratos/v2/selector/random"
-	"github.com/go-kratos/kratos/v2/selector/wrr"
-	"github.com/go-kratos/kratos/v2/transport/grpc"
-	jwtv4 "github.com/golang-jwt/jwt/v4"
-	"github.com/hashicorp/consul/api"
-	pb "helloworld/api/helloworld/v1"
 )
+
+type bootstrap struct {
+	Application struct {
+		Name    string `json:"name"`
+		Version string `json:"version"`
+		Author  string `json:"author"`
+	} `json:"application"`
+	Mysql struct {
+		Songguo struct {
+			Master struct {
+				Host string `json:"host"`
+				Port string `json:"port"`
+			} `json:"master"`
+		} `json:"songguo"`
+	} `json:"mysql"`
+}
 
 func main() {
 
-}
-
-//sentry demo
-func sentryDemo () {
-	sentry.Init(sentry.ClientOptions{
-		Dsn: "http://1004bd2729014b07b8e5fef2e31d2ba5@192.168.10.126:9000/1",
-		AttachStacktrace: true, // recommended
-	})
-	sentry.CaptureMessage(`主动推送`)
-}
-
-//服务发现与负载均衡
-func balanceDemo() {
-	selector.SetGlobalSelector(p2c.NewBuilder())
-	selector.SetGlobalSelector(random.NewBuilder())
-	selector.SetGlobalSelector(wrr.NewBuilder())
-
-	// new consul client
-	client, err := api.NewClient(api.DefaultConfig())
-	if err != nil {
-		panic(err)
-	}
-	// new dis with consul client
-	dis := consul.New(client)
-
-	endpoint := "discovery:///myHello"
-	conn, err := grpc.DialInsecure(context.Background(), grpc.WithEndpoint(endpoint), grpc.WithDiscovery(dis))
-	if err != nil {
-		panic(err)
-	}
-	demoClient := pb.NewDemoClient(conn)
-	reply, err := demoClient.GetDemo(context.Background(), &pb.GetDemoRequest{UserId: 1})
-	log.Infow(`reply`, reply, `err`, err)
-}
-
-//golang的grpc例子与中间件jwt认证例子
-func grpcAuthDemo() {
-	testKey := `testKey`
-	con, _ := grpc.DialInsecure(
-		context.Background(),
-		grpc.WithEndpoint("127.0.0.1:8080"),
-		grpc.WithMiddleware(
-			jwt.Client(func(token *jwtv4.Token) (interface{}, error) {
-				return []byte(testKey), nil
-			}),
+	c := config.New(
+		config.WithSource(
+			apollo.NewSource(
+				apollo.WithAppID("sgxx1"),
+				apollo.WithCluster("default"),
+				apollo.WithEndpoint("http://81.68.181.139:8080"),
+				apollo.WithNamespace("application,mysql"),
+				apollo.WithEnableBackup(),
+				apollo.WithSecret("c6e603766b28491bb7d30a9391c653fe"),
+			),
 		),
 	)
-	demoClient := pb.NewDemoClient(con)
-	reply, err := demoClient.GetDemo(context.Background(), &pb.GetDemoRequest{UserId: 2})
-	log.Infow(`reply`, reply, `err`, err)
+	var bc bootstrap
+	if err := c.Load(); err != nil {
+		//panic(err)
+	}
+
+	scan(c, &bc)
+
+	value(c, "application")
+	//value(c, "application.name")
+	//value(c, "event.array")
+	//value(c, "demo.deep")
+
+	watch(c, "application")
+	<-make(chan struct{})
+
+}
+func scan(c config.Config, bc *bootstrap) {
+	err := c.Scan(bc)
+	fmt.Printf("=========== scan result =============\n")
+	fmt.Printf("err: %v\n", err)
+	fmt.Printf("cfg: %+v\n\n", bc)
+}
+
+func value(c config.Config, key string) {
+	fmt.Printf("=========== value result =============\n")
+	v := c.Value(key).Load()
+	fmt.Printf("key=%s, load: %+v\n\n", key, v)
+}
+
+func watch(c config.Config, key string) {
+	if err := c.Watch(key, func(key string, value config.Value) {
+		log.Info("config(key=%s) changed: %s\n", key, value.Load())
+	}); err != nil {
+		//panic(err)
+	}
 }

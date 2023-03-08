@@ -1,0 +1,29 @@
+syntax = "proto3";
+package kratos.api;
+option go_package = "internal/conf;conf";
+import "google/protobuf/duration.proto";
+
+message Base {
+  Server server = 1;
+  Apollo apollo = 2;
+}
+
+message Server {
+  message HTTP {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  message GRPC {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  HTTP http = 1;
+  GRPC grpc = 2;
+}
+
+message Apollo {
+  string driver = 1;
+  string source = 2;
+}
