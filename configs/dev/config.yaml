@@ -9,5 +9,6 @@ apollo:
   app_id: pay123456
   cluster: default
   endpoint: http://81.68.181.139:8080
-  namespace: application
+  namespace: application,mysql
   secret: 45450aff807242e4b04e2618a5d5e984
+  backup_path: _autoGeneration/apollo

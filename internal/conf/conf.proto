@@ -14,22 +14,27 @@ message Application {
 }
 
 message Mysql {
-  message Songguo {
-      message Master{
-          string host = 1;
-          int64 port = 2;
-          string username = 3;
-          string password = 4;
-      }
-      message Slave{
-        string host = 1;
-        int64 port = 2;
-        string username = 3;
-        string password = 4;
-      }
-  }
+    Songguo songguo= 1;
 }
 
+message Songguo {
+  Master master = 1;
+  Slave slave = 2;
+}
+
+message Master{
+  string host = 1;
+  int64 port = 2;
+  string username = 3;
+  string password = 4;
+}
+
+message Slave{
+  string host = 1;
+  int64 port = 2;
+  string username = 3;
+  string password = 4;
+}
 //message Data {
 //  message Database {
 //    string driver = 1;

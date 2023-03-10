@@ -15,12 +15,12 @@ var ProviderSet = wire.NewSet(NewData, NewGreeterRepo, NewDemoRepo)
 // Data .
 type Data struct {
 	// TODO wrapped database client
-	db       *gorm.DB
-	redisCache    *redis.Base
+	db         *gorm.DB
+	redisCache *redis.Base
 }
 
 // NewData .
-func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
+func NewData(c *db.Data, logger log.Logger) (*Data, func(), error) {
 	l := log.NewHelper(log.With(logger, "module", "helloWorld-service/data"))
 
 	db, err := NewGorm(c.Database.Source)
@@ -50,7 +50,7 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 	}
 
 	return &Data{
-		db:db,
-		redisCache:redisCache,
+		db:         db,
+		redisCache: redisCache,
 	}, cleanup, nil
 }
