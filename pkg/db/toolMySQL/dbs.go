@@ -38,7 +38,6 @@ func DBsGetOne(dbFlagName string) *gorm.DB {
 	return dbList
 }
 
-//TODO 此方法计划要修改
 func DBsPingOne(dbFlagName string) {
 
 	db := DBsGetOne(dbFlagName)
@@ -52,7 +51,6 @@ func DBsPingOne(dbFlagName string) {
 	defer dbsMutex.Unlock()
 
 	if sqlDB, err := db.DB(); err == nil {
-		return
 		if err := sqlDB.Ping(); err != nil {
 			log.Printf("err = %v\n", err)
 		} else {

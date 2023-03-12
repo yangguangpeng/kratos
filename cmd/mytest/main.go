@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"helloworld/internal/data/model"
 	"helloworld/pkg/db/toolMySQL"
+	"time"
 )
 
 func main() {
@@ -27,4 +28,6 @@ func main() {
 	userInfo, _ := model.UsersMgr(db).FetchByPrimaryKey(uint32(userID))
 	retAge := userInfo.Age
 	fmt.Println(retAge)
+
+	time.Sleep(time.Duration(2000) * time.Second)
 }

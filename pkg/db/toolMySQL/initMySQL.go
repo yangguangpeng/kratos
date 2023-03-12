@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	maxHealthCheckDuration = 20 * 1000 //20秒
+	maxHealthCheckDuration = 3 * 1000 //20秒
 )
 
 type MySQLItemSchema struct {
