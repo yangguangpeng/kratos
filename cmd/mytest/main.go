@@ -2,50 +2,29 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/middleware/tracing"
-	"github.com/syyongx/php2go"
-	"os"
+	"helloworld/internal/data/model"
+	"helloworld/pkg/db/toolMySQL"
 )
 
 func main() {
 
-	time := php2go.Time()
-
-	logPath := `_autoGeneration/logs/` + php2go.Date(`2006-01`, time)
-
-	if ok, _ := php2go.IsDir(logPath); !ok {
-		err := os.MkdirAll(logPath, 0666)
-		if err != nil {
-			panic(err)
-		}
+	config := make(map[string]toolMySQL.MySQLItemSchema)
+	config[`songguo`] = toolMySQL.MySQLItemSchema{
+		Dsn:                  `root:admin123@tcp(127.0.0.1:3306)/test`,
+		MaxRetryConnectTimes: 3,
 	}
+	mysqlInfo := []toolMySQL.MySQLSchema{}
 
-	logFileNameSuffix := `_` + php2go.Date(`02`, time)
-	logFileName := `test` + logFileNameSuffix + `.log`
+	mysqlInfo = append(mysqlInfo, config)
 
-	logFile := logPath + `/` + logFileName
+	mysql := &toolMySQL.InitMySQL{
+		mysqlInfo}
 
-	fmt.Println(logFile)
+	mysql.Init()
+	db := toolMySQL.DBs["songguo"]
 
-	//文件日志：
-	f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		return
-	}
-
-	logger := log.With(log.NewStdLogger(f),
-		"ts", log.DefaultTimestamp,
-		"defaultCaller", log.DefaultCaller,
-		"caller", log.Caller,
-		"service.id", 1,
-		"service.name", 1,
-		"service.version", 1,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
-
-	h := log.NewHelper(logger)
-
-	h.Info(`sdfsdfsd`)
+	userID := 1
+	userInfo, _ := model.UsersMgr(db).FetchByPrimaryKey(uint32(userID))
+	retAge := userInfo.Age
+	fmt.Println(retAge)
 }
