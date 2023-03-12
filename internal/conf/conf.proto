@@ -20,6 +20,7 @@ message Mysql {
 message Songguo {
   Master master = 1;
   Slave slave = 2;
+  string db_name = 3;
 }
 
 message Master{

@@ -1,9 +1,9 @@
 package toolMySQL
 
 import (
+	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"log"
 	"sync"
 	"time"
 )
@@ -12,14 +12,6 @@ var (
 	DBs      map[string]*gorm.DB = map[string]*gorm.DB{}
 	dbsMutex sync.RWMutex
 )
-
-func DbsInit(dbFlagName string) {
-
-	dbsMutex.Lock()
-	defer dbsMutex.Unlock()
-
-	//DBs[dbFlagName] = &gorm.DB{}
-}
 
 func DBsConnectOne(dbFlagName string, dsn string, config MySQLItemSchema) {
 
@@ -43,7 +35,7 @@ func DBsPingOne(dbFlagName string) {
 	db := DBsGetOne(dbFlagName)
 
 	if db == nil {
-		log.Printf("db is not found")
+		log.Error("db is not found")
 		return
 	}
 
@@ -52,9 +44,9 @@ func DBsPingOne(dbFlagName string) {
 
 	if sqlDB, err := db.DB(); err == nil {
 		if err := sqlDB.Ping(); err != nil {
-			log.Printf("err = %v\n", err)
+			log.Errorf("err = %v\n", err)
 		} else {
-			log.Printf("DBsPingOne success. dbFlagName = %s", dbFlagName)
+			log.Infof("DBsPingOne success. dbFlagName = %s", dbFlagName)
 		}
 	}
 }
@@ -86,7 +78,7 @@ func Connect(dsn string, logMode bool, config MySQLItemSchema, retryTimes int) *
 
 	defer func() {
 		if errorOccur != nil && retryTimes == 1 {
-			log.Printf("经过几次连接sql时，仍然失败，错误信息为：%v", errorOccur)
+			log.Errorf("经过几次连接sql时，仍然失败，错误信息为：%v", errorOccur)
 		}
 	}()
 
@@ -121,4 +113,14 @@ func Connect(dsn string, logMode bool, config MySQLItemSchema, retryTimes int) *
 
 	//db.LogMode(logMode)
 	return db
+}
+
+func DBsCloseOne(dbFlagName string) {
+	dbsMutex.Lock()
+	defer dbsMutex.Unlock()
+
+	if DBs[dbFlagName] != nil {
+		sqlDB, _ := DBs[dbFlagName].DB()
+		sqlDB.Close()
+	}
 }

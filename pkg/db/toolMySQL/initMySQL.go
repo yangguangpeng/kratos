@@ -1,6 +1,7 @@
 package toolMySQL
 
 import (
+	"github.com/go-kratos/kratos/v2/log"
 	"time"
 )
 
@@ -19,25 +20,24 @@ type MySQLItemSchema struct {
 type MySQLSchema map[string]MySQLItemSchema
 
 type InitMySQL struct {
-	MySQLInfo []MySQLSchema
+	MySQLInfo          MySQLSchema
+	systemQuit         chan struct{}
+	systemQuitFinished chan struct{}
+	Log                *log.Helper
 }
 
 func (t *InitMySQL) Init() {
+	t.systemQuit = make(chan struct{}, 1)
+	t.systemQuitFinished = make(chan struct{}, 1)
 	t.connect()
 	go t.HealthCheck(maxHealthCheckDuration)
 }
 
 func (t *InitMySQL) connect() {
 
-	for _, item := range t.MySQLInfo {
-
-		for dbFlagName, schema := range item {
-			DbsInit(dbFlagName)
-
-			DBsConnectOne(dbFlagName, schema.Dsn, schema)
-			DBsPingOne(dbFlagName)
-		}
-
+	for dbFlagName, schema := range t.MySQLInfo {
+		DBsConnectOne(dbFlagName, schema.Dsn, schema)
+		DBsPingOne(dbFlagName)
 	}
 
 }
@@ -48,7 +48,21 @@ func (t *InitMySQL) HealthCheck(healthCheckDuration int) {
 	t.connect()
 	//定时检查
 	select {
+	case <-t.systemQuit:
+		log.Info("InitMySQL.healthCheck exited")
+		t.systemQuitFinished <- struct{}{}
+		return
 	case <-time.After(time.Duration(healthCheckDuration) * time.Millisecond):
 		t.HealthCheck(healthCheckDuration)
 	}
+}
+
+func (t *InitMySQL) Close() {
+
+	for dbFlagName, _ := range t.MySQLInfo {
+		DBsCloseOne(dbFlagName)
+	}
+	t.systemQuit <- struct{}{}
+	log.Info("InitMySQL.Close exited")
+	<-t.systemQuitFinished
 }

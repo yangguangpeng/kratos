@@ -14,12 +14,9 @@ func main() {
 		Dsn:                  `root:admin123@tcp(127.0.0.1:3306)/test`,
 		MaxRetryConnectTimes: 3,
 	}
-	mysqlInfo := []toolMySQL.MySQLSchema{}
-
-	mysqlInfo = append(mysqlInfo, config)
 
 	mysql := &toolMySQL.InitMySQL{
-		mysqlInfo}
+		MySQLInfo: config}
 
 	mysql.Init()
 	db := toolMySQL.DBs["songguo"]
