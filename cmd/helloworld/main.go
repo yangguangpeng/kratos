@@ -65,7 +65,7 @@ func main() {
 		panic(err)
 	}
 
-	globalConfig := apollo.GetConfig(baseConfig)
+	globalConfig := apollo.GetConfig(baseConfig.GetApollo())
 
 	logger := log.With(log.NewStdLogger(os.Stdout),
 		"ts", log.DefaultTimestamp,
@@ -77,10 +77,8 @@ func main() {
 		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 	)
-	data := {
 
-	}
-	app, cleanup, err := wireApp(baseConfig.Server, bc.Data, logger)
+	app, cleanup, err := wireApp(baseConfig.Server, globalConfig, logger)
 	if err != nil {
 		panic(err)
 	}

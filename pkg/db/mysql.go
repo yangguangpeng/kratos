@@ -11,7 +11,8 @@ import (
 const SONGGUO_MASTER = `songguoMaster`
 
 type Mysql struct {
-	log *log.Helper
+	options   *options
+	toolMysql *toolMySQL.InitMySQL
 }
 
 type Option func(*options)
@@ -38,27 +39,30 @@ func New(opts ...Option) *Mysql {
 	for _, opt := range opts {
 		opt(&o)
 	}
-	initMysql(o)
-	return &Mysql{o.log}
+	m := &Mysql{options: &o}
+	m.initMysql()
+	return m
 }
 
-func initMysql(o options) {
+func (m *Mysql) initMysql() {
+	o := m.options
 	config := make(map[string]toolMySQL.MySQLItemSchema)
 
 	config[SONGGUO_MASTER] = toolMySQL.MySQLItemSchema{
-		Dsn:                  makeSongguoMasterDSN(o),
+		Dsn:                  m.makeSongguoMasterDSN(),
 		MaxRetryConnectTimes: 3,
 	}
 
-	mysql := &toolMySQL.InitMySQL{
+	toolMysql := &toolMySQL.InitMySQL{
 		MySQLInfo: config,
 		Log:       o.log}
 
-	mysql.Init()
-
+	toolMysql.Init()
+	m.toolMysql = toolMysql
 }
 
-func makeSongguoMasterDSN(o options) string {
+func (m *Mysql) makeSongguoMasterDSN() string {
+	o := m.options
 	songguoMysql := o.config.GetMysql().Songguo
 	songguoMaster := songguoMysql.GetMaster()
 	return fmt.Sprintf(`%s:%s@tcp(%s:%s)/%s`, songguoMaster.GetUsername(),
@@ -71,7 +75,7 @@ func makeSongguoMasterDSN(o options) string {
 func (m *Mysql) GetSongguoMaster() *gorm.DB {
 	gdb, ok := toolMySQL.DBs[SONGGUO_MASTER]
 	if !ok {
-		m.log.Errorf(`对象%s不存在`, SONGGUO_MASTER)
+		m.options.log.Errorf(`对象%s不存在`, SONGGUO_MASTER)
 		return nil
 	}
 	return gdb
@@ -81,8 +85,8 @@ func (m *Mysql) GetSlave() {
 
 }
 
-func Cleanup(toolMysql *toolMySQL.InitMySQL) func() {
+func (m *Mysql) Cleanup() func() {
 	return func() {
-		toolMysql.Close()
+		m.toolMysql.Close()
 	}
 }

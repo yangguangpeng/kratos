@@ -7,25 +7,25 @@ import (
 	"helloworld/internal/conf"
 )
 
-func GetConfig(baseConfig conf.Base) conf.Bootstrap {
+func GetConfig(ApolloConfig *conf.Apollo) *conf.Bootstrap {
 	c := config.New(
 		config.WithSource(
 			apollo.NewSource(
-				apollo.WithAppID(baseConfig.GetApollo().GetAppId()),
-				apollo.WithCluster(baseConfig.GetApollo().GetCluster()),
-				apollo.WithEndpoint(baseConfig.GetApollo().GetEndpoint()),
-				apollo.WithNamespace(baseConfig.GetApollo().GetNamespace()),
+				apollo.WithAppID(ApolloConfig.GetAppId()),
+				apollo.WithCluster(ApolloConfig.GetCluster()),
+				apollo.WithEndpoint(ApolloConfig.GetEndpoint()),
+				apollo.WithNamespace(ApolloConfig.GetNamespace()),
 				apollo.WithEnableBackup(),
-				apollo.WithSecret(baseConfig.GetApollo().GetSecret()),
-				apollo.WithBackupPath(baseConfig.GetApollo().GetBackupPath()),
+				apollo.WithSecret(ApolloConfig.GetSecret()),
+				apollo.WithBackupPath(ApolloConfig.GetBackupPath()),
 			),
 		),
 	)
-	var bc conf.Bootstrap
+	var bc *conf.Bootstrap
 	if err := c.Load(); err != nil {
 		panic(err)
 	}
-	scan(c, &bc)
+	scan(c, bc)
 	return bc
 }
 
