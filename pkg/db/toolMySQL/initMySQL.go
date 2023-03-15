@@ -11,10 +11,10 @@ var (
 
 type MySQLItemSchema struct {
 	Dsn                  string
-	SetMaxIdleConns      int
-	SetMaxOpenConns      int
+	SetMaxIdleConns      int32
+	SetMaxOpenConns      int32
 	SetConnMaxLifetime   int64
-	MaxRetryConnectTimes int
+	MaxRetryConnectTimes int32
 }
 
 type MySQLSchema map[string]MySQLItemSchema

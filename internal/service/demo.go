@@ -27,7 +27,7 @@ func (s *DemoService) DeleteDemo(ctx context.Context, req *pb.DeleteDemoRequest)
 }
 func (s *DemoService) GetDemo(ctx context.Context, req *pb.GetDemoRequest) (*pb.GetDemoReply, error) {
 	result, err := s.du.GetFormation(ctx, req.UserId)
-	return &pb.GetDemoReply{Result: result + `80`}, err
+	return &pb.GetDemoReply{Result: result}, err
 }
 func (s *DemoService) ListDemo(ctx context.Context, req *pb.ListDemoRequest) (*pb.ListDemoReply, error) {
 	return &pb.ListDemoReply{}, nil

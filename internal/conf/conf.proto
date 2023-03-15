@@ -28,6 +28,9 @@ message Master{
   int64 port = 2;
   string username = 3;
   string password = 4;
+  int32 set_max_idle_conns = 5;
+  int32 set_max_open_conns = 6;
+  int64 set_conn_max_lifetime = 7;
 }
 
 message Slave{
