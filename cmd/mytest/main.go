@@ -2,29 +2,69 @@ package main
 
 import (
 	"fmt"
-	"helloworld/internal/data/model"
-	"helloworld/pkg/db/toolMySQL"
-	"time"
+	"github.com/go-kratos/kratos/contrib/config/apollo/v2"
+	"github.com/go-kratos/kratos/v2/config"
+	"github.com/go-kratos/kratos/v2/log"
+	"helloworld/internal/conf"
 )
+
+type bootstrap struct {
+	Application struct {
+		Name    string `json:"name"`
+		Version string `json:"version"`
+		Author  string `json:"author"`
+	} `json:"application"`
+}
 
 func main() {
 
-	config := make(map[string]toolMySQL.MySQLItemSchema)
-	config[`songguo`] = toolMySQL.MySQLItemSchema{
-		Dsn:                  `root:admin123@tcp(127.0.0.1:3306)/test`,
-		MaxRetryConnectTimes: 3,
+	c := config.New(
+		config.WithSource(
+			apollo.NewSource(
+				apollo.WithAppID("sgxx1"),
+				apollo.WithCluster("default"),
+				apollo.WithEndpoint("http://81.68.181.139:8080"),
+				apollo.WithNamespace("application,mysql"),
+				apollo.WithEnableBackup(),
+				apollo.WithSecret("68b257a5cf2643438614f0c4e9750fe1"),
+			),
+		),
+	)
+	var bc conf.Bootstrap
+	if err := c.Load(); err != nil {
+		//panic(err)
 	}
 
-	mysql := &toolMySQL.InitMySQL{
-		MySQLInfo: config}
+	//scan(c, &bc)
+	c.Scan(&bc)
+	fmt.Printf("cfg: %+v\n\n", bc)
+	//value(c, "application")
+	//value(c, "application.name")
+	//value(c, "event.array")
+	//value(c, "demo.deep")
 
-	mysql.Init()
-	db := toolMySQL.DBs["songguo"]
+	//watch(c, "application")
+	//<-make(chan struct{})
 
-	userID := 1
-	userInfo, _ := model.UsersMgr(db).FetchByPrimaryKey(uint32(userID))
-	retAge := userInfo.Age
-	fmt.Println(retAge)
+}
+func scan(c config.Config, bc *bootstrap) {
+	err := c.Scan(bc)
+	fmt.Printf("=========== scan result =============\n")
+	fmt.Printf("err: %v\n", err)
+	fmt.Printf("cfg: %+v\n\n", bc)
+	fmt.Println(`bc.Application.Name`, bc.Application.Name)
+}
 
-	time.Sleep(time.Duration(2000) * time.Second)
+func value(c config.Config, key string) {
+	fmt.Printf("=========== value result =============\n")
+	v := c.Value(key).Load()
+	fmt.Printf("key=%s, load: %+v\n\n", key, v)
+}
+
+func watch(c config.Config, key string) {
+	if err := c.Watch(key, func(key string, value config.Value) {
+		log.Info("config(key=%s) changed: %s\n", key, value.Load())
+	}); err != nil {
+		//panic(err)
+	}
 }
