@@ -6,8 +6,9 @@ server:
     addr: 0.0.0.0:8080
     timeout: 1s
 apollo:
-  app_id: pay123456
+  app_id: sgxx1
   cluster: default
   endpoint: http://81.68.181.139:8080
-  namespace: application
-  secret: 45450aff807242e4b04e2618a5d5e984
+  namespace: application,mysql
+  secret: 68b257a5cf2643438614f0c4e9750fe1
+  backup_path: _autoGeneration/apollo

@@ -26,7 +26,7 @@ message Server {
 message Apollo {
   string app_id = 1;
   string cluster = 2;
-  string Endpoint = 3;
+  string endpoint = 3;
   string namespace = 4;
   string secret = 5;
   string backup_path = 6;

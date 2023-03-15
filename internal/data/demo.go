@@ -3,7 +3,6 @@ package data
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
-	v1 "helloworld/api/helloworld/v1"
 	"helloworld/internal/biz"
 	"helloworld/internal/data/model"
 	"strconv"
@@ -16,19 +15,13 @@ type demoRepo struct {
 
 func (d *demoRepo) FindByID(c context.Context, userID int64) (*biz.Demo, error) {
 	d.log.Info(`请求参数` + strconv.Itoa(int(userID)))
-
-	gorm := d.data.db.GetSongguoMaster()
-
-	userInfo, _ := model.UsersMgr(gorm).FetchByPrimaryKey(uint32(userID))
-	if userInfo.Age == 0 {
-		return &biz.Demo{}, v1.ErrorUserNotFound(`user %s not found`, strconv.Itoa(int(userID)))
-	}
+	odb := d.data.db.GetSongguoMaster()
+	userInfo, _ := model.UsersMgr(odb).FetchByPrimaryKey(uint32(userID))
 	retAge := userInfo.Age
-
-	//规范处理，写个拼接名称
+	////规范处理，写个拼接名称
 	//d.data.redisCache.KeyName = `userID:`+strconv.Itoa(int(userID))
 	//age,err := redis.Int(d.data.redisCache.Get())
-
+	//
 	//var retAge int8
 	//retAge = 0
 	//
