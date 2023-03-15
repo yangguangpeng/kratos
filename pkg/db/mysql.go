@@ -47,7 +47,7 @@ func New(opts ...Option) *Mysql {
 func (m *Mysql) initMysql() {
 	o := m.options
 	config := make(map[string]toolMySQL.MySQLItemSchema)
-
+	fmt.Printf(`m.makeSongguoMasterDSN()`, m.makeSongguoMasterDSN())
 	config[SONGGUO_MASTER] = toolMySQL.MySQLItemSchema{
 		Dsn:                  m.makeSongguoMasterDSN(),
 		MaxRetryConnectTimes: 3,
@@ -65,7 +65,7 @@ func (m *Mysql) makeSongguoMasterDSN() string {
 	o := m.options
 	songguoMysql := o.config.GetMysql().Songguo
 	songguoMaster := songguoMysql.GetMaster()
-	return fmt.Sprintf(`%s:%s@tcp(%s:%s)/%s`, songguoMaster.GetUsername(),
+	return fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s`, songguoMaster.GetUsername(),
 		songguoMaster.GetPassword(),
 		songguoMaster.GetHost(),
 		songguoMaster.GetPort(),

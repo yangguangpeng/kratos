@@ -7,7 +7,7 @@ import (
 	"helloworld/internal/conf"
 )
 
-func GetConfig(ApolloConfig *conf.Apollo) conf.Bootstrap {
+func GetConfig(ApolloConfig *conf.Apollo) *conf.Bootstrap {
 	c := config.New(
 		config.WithSource(
 			apollo.NewSource(
@@ -26,7 +26,7 @@ func GetConfig(ApolloConfig *conf.Apollo) conf.Bootstrap {
 		panic(err)
 	}
 	scan(c, &bc)
-	return bc
+	return &bc
 }
 
 func scan(c config.Config, bc *conf.Bootstrap) {
