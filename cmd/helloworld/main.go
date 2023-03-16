@@ -95,7 +95,7 @@ func main() {
 		"service.id", 1,
 		"service.name", 1,
 		"service.version", 1,
-		"trace.id", GetTraceID(),
+		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 	)
 	//日志结束
