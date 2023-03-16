@@ -115,10 +115,10 @@ func main() {
 func GetTraceID() log.Valuer {
 	return func(ctx context.Context) interface{} {
 		if header, ok := transport.FromServerContext(ctx); ok {
-			return header.RequestHeader().Get(`MyTraceID`)
+			return header.RequestHeader().Get(`Mytraceid`)
 		}
 		if md, ok := metadata.FromServerContext(ctx); ok {
-			return md.Get("MyTraceID")
+			return md.Get("Mytraceid")
 		}
 		return "nothing"
 	}
