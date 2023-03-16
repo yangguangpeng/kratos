@@ -14,7 +14,7 @@ type MySQLItemSchema struct {
 	SetMaxIdleConns      int32
 	SetMaxOpenConns      int32
 	SetConnMaxLifetime   int64
-	MaxRetryConnectTimes int32
+	MaxRetryConnectTimes int
 }
 
 type MySQLSchema map[string]MySQLItemSchema

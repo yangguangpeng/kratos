@@ -10,13 +10,12 @@ import (
 
 type Demo struct {
 	UserID int64
-	Age int8
+	Age    int8
 }
 
 type DemoRepo interface {
 	FindByID(context.Context, int64) (*Demo, error)
 }
-
 
 type DemoUsecase struct {
 	repo DemoRepo
@@ -29,11 +28,12 @@ func NewDemoUsecase(repo DemoRepo, logger log.Logger) *DemoUsecase {
 
 //实现业务逻辑的层
 func (du *DemoUsecase) GetFormation(ctx context.Context, userID int64) (string, error) {
-	demo,err := du.repo.FindByID(ctx, userID)
+	return ``, nil
+	demo, err := du.repo.FindByID(ctx, userID)
 	if v1.IsUserNotFound(err) {
 		//取出错误的具体信息
-		return errors.FromError(err).GetMessage(),nil
+		return errors.FromError(err).GetMessage(), nil
 	}
-	ret := `userID:`+ strconv.Itoa(int(userID)) +`,年龄：`+ strconv.Itoa(int(demo.Age))
+	ret := `userID:` + strconv.Itoa(int(userID)) + `,年龄：` + strconv.Itoa(int(demo.Age))
 	return ret, err
 }

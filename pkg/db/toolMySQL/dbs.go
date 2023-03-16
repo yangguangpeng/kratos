@@ -101,10 +101,10 @@ func Connect(dsn string, logMode bool, config MySQLItemSchema, retryTimes int) *
 	}
 
 	// SetMaxIdleConns 设置空闲连接池中的最大连接数。
-	sqlDB.SetMaxIdleConns(config.SetMaxIdleConns)
+	sqlDB.SetMaxIdleConns(int(config.SetMaxIdleConns))
 
 	// SetMaxOpenConns 设置数据库连接最大打开数。
-	sqlDB.SetMaxOpenConns(config.SetMaxOpenConns)
+	sqlDB.SetMaxOpenConns(int(config.SetMaxOpenConns))
 
 	// SetConnMaxLifetime 设置可重用连接的最长时间
 	sqlDB.SetConnMaxLifetime(time.Second * time.Duration(config.SetConnMaxLifetime))

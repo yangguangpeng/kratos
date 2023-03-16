@@ -1,70 +1,62 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"github.com/go-kratos/kratos/contrib/config/apollo/v2"
-	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/log"
-	"helloworld/internal/conf"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-kratos/kratos/v2/transport"
+	"github.com/syyongx/php2go"
+	"os"
 )
-
-type bootstrap struct {
-	Application struct {
-		Name    string `json:"name"`
-		Version string `json:"version"`
-		Author  string `json:"author"`
-	} `json:"application"`
-}
 
 func main() {
 
-	c := config.New(
-		config.WithSource(
-			apollo.NewSource(
-				apollo.WithAppID("sgxx1"),
-				apollo.WithCluster("default"),
-				apollo.WithEndpoint("http://81.68.181.139:8080"),
-				apollo.WithNamespace("application,mysql"),
-				apollo.WithEnableBackup(),
-				apollo.WithSecret("68b257a5cf2643438614f0c4e9750fe1"),
-			),
-		),
-	)
-	var bc conf.Bootstrap
-	if err := c.Load(); err != nil {
-		//panic(err)
+	time := php2go.Time()
+
+	logPath := `_autoGeneration/logs/` + php2go.Date(`2006-01`, time)
+
+	if ok, _ := php2go.IsDir(logPath); !ok {
+		err := os.MkdirAll(logPath, 0666)
+		if err != nil {
+			panic(err)
+		}
 	}
 
-	//scan(c, &bc)
-	c.Scan(&bc)
-	fmt.Printf("cfg: %+v\n\n", bc)
-	//value(c, "application")
-	//value(c, "application.name")
-	//value(c, "event.array")
-	//value(c, "demo.deep")
+	logFileNameSuffix := `_` + php2go.Date(`02`, time)
+	logFileName := `test` + logFileNameSuffix + `.log`
 
-	//watch(c, "application")
-	//<-make(chan struct{})
+	logFile := logPath + `/` + logFileName
 
+	fmt.Println(logFile)
+
+	//文件日志：
+	f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		return
+	}
+
+	logger := log.With(log.NewStdLogger(f),
+		"ts", log.DefaultTimestamp,
+		"defaultCaller", log.DefaultCaller,
+		"caller", log.Caller,
+		"service.id", 1,
+		"service.name", 1,
+		"service.version", 1,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
+
+	h := log.NewHelper(logger)
+
+	h.Info(`sdfsdfsd`)
 }
-func scan(c config.Config, bc *bootstrap) {
-	err := c.Scan(bc)
-	fmt.Printf("=========== scan result =============\n")
-	fmt.Printf("err: %v\n", err)
-	fmt.Printf("cfg: %+v\n\n", bc)
-	fmt.Println(`bc.Application.Name`, bc.Application.Name)
-}
 
-func value(c config.Config, key string) {
-	fmt.Printf("=========== value result =============\n")
-	v := c.Value(key).Load()
-	fmt.Printf("key=%s, load: %+v\n\n", key, v)
-}
-
-func watch(c config.Config, key string) {
-	if err := c.Watch(key, func(key string, value config.Value) {
-		log.Info("config(key=%s) changed: %s\n", key, value.Load())
-	}); err != nil {
-		//panic(err)
+func GetT() log.Valuer {
+	return func(ctx context.Context) interface{} {
+		if header, ok := transport.FromServerContext(ctx); ok {
+			return header.RequestHeader().Get(`myTraceID`)
+		}
+		return "nothing"
 	}
 }
