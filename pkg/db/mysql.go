@@ -40,7 +40,7 @@ func New(opts ...Option) *Mysql {
 		opt(&o)
 	}
 	m := &Mysql{options: &o}
-	m.initMysql()
+	//m.initMysql()
 	return m
 }
 
