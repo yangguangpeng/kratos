@@ -100,7 +100,7 @@ func main() {
 	)
 	//日志结束
 
-	app, cleanup, err := wireApp(baseConfig.Server, globalConfig, logger)
+	app, cleanup, err := wireApp(baseConfig.Server, &globalConfig, logger)
 	if err != nil {
 		panic(err)
 	}

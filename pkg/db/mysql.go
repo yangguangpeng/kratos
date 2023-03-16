@@ -67,7 +67,7 @@ func (m *Mysql) initMysql() {
 
 func (m *Mysql) makeSongguoMasterDSN() string {
 	o := m.options
-	songguoMysql := o.config.GetMysql().Songguo
+	songguoMysql := o.config.GetMysql().GetSongguo()
 	songguoMaster := songguoMysql.GetMaster()
 	return fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s`, songguoMaster.GetUsername(),
 		songguoMaster.GetPassword(),
