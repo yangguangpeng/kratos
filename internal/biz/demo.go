@@ -4,8 +4,10 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport"
 	v1 "helloworld/api/helloworld/v1"
+	"os"
 	"strconv"
 )
 
@@ -29,10 +31,24 @@ func NewDemoUsecase(repo DemoRepo, logger log.Logger) *DemoUsecase {
 
 //实现业务逻辑的层
 func (du *DemoUsecase) GetFormation(ctx context.Context, userID int64) (string, error) {
-
+	traceId := `init`
+	if header, ok := transport.FromServerContext(ctx); ok {
+		traceId = header.RequestHeader().Get(`Mytraceid`)
+	}
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"defaultCaller", log.DefaultCaller,
+		"caller", log.Caller,
+		"service.id", 1,
+		"service.name", 1,
+		"service.version", 1,
+		"trace.id", traceId,
+		"span.id", tracing.SpanID(),
+	)
+	du.log = log.NewHelper(logger)
 	if header, ok := transport.FromServerContext(ctx); ok {
 		du.log.Infow(`Mytraceid`, header.RequestHeader().Get(`Mytraceid`))
-		du.log.WithContext(ctx).Info(`come in`)
+		du.log.Info(`come in`)
 	}
 	du.log.Info(`userID:` + strconv.Itoa(int(userID)))
 
