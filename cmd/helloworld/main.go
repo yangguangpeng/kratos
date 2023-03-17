@@ -84,19 +84,20 @@ func main() {
 	logFileName := `test` + logFileNameSuffix + `.log`
 	logFile := logPath + `/` + logFileName
 	//文件日志：
-	f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	_, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		return
 	}
-	logger := log.With(log.NewStdLogger(f),
+	logger := log.With(log.NewStdLogger(os.Stdout),
 		"ts", log.DefaultTimestamp,
 		"defaultCaller", log.DefaultCaller,
 		"caller", log.Caller,
 		"service.id", 1,
 		"service.name", 1,
 		"service.version", 1,
-		"trace.id", tracing.TraceID(),
+		"trace.id", diy(),
 		"span.id", tracing.SpanID(),
+		//"diy.trace" ,diy(),
 	)
 	//日志结束
 
@@ -121,5 +122,14 @@ func GetTraceID() log.Valuer {
 			return md.Get("Mytraceid")
 		}
 		return "nothing"
+	}
+}
+
+func diy() log.Valuer {
+	return func(ctx context.Context) interface{} {
+		if header, ok := transport.FromServerContext(ctx); ok {
+			return header.RequestHeader().Get(`Mytraceid`)
+		}
+		return ``
 	}
 }

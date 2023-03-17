@@ -65,9 +65,6 @@ func MyMiddleware1() middleware.Middleware {
 			span.SetAttributes(attrs...)
 
 			span.End()
-			log.Info(`MyMiddleware1 开始`)
-
-			log.Info(`MyMiddleware1 结束`)
 
 			return handler(ctx, req)
 		}
