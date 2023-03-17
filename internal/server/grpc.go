@@ -15,6 +15,7 @@ import (
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
+
 	v1 "helloworld/api/helloworld/v1"
 	"helloworld/internal/conf"
 	"helloworld/internal/service"
@@ -22,7 +23,7 @@ import (
 
 // NewGRPCServer new a gRPC server.
 func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, demo *service.DemoService, logger log.Logger) *grpc.Server {
-	err := initTracer("http://localhost:14268/api/traces")
+	err := initTracer("http://192.168.1.5:14268/api/traces")
 	if err != nil {
 		panic(err)
 	}
@@ -60,6 +61,7 @@ func initTracer(url string) error {
 	if err != nil {
 		return err
 	}
+
 	tp := tracesdk.NewTracerProvider(
 		// Set the sampling rate based on the parent span to 100%
 		tracesdk.WithSampler(tracesdk.ParentBased(tracesdk.TraceIDRatioBased(1.0))),
