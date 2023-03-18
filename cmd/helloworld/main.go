@@ -15,6 +15,7 @@ import (
 	"github.com/syyongx/php2go"
 	"helloworld/internal/conf"
 	"helloworld/pkg/apollo"
+	"helloworld/pkg/global"
 	"os"
 
 	_ "go.uber.org/automaxprocs"
@@ -95,11 +96,12 @@ func main() {
 		"service.id", 1,
 		"service.name", 1,
 		"service.version", 1,
-		"trace.id", diy(),
+		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 		//"diy.trace" ,diy(),
 	)
 	//日志结束
+	global.Initial(baseConfig)
 
 	app, cleanup, err := wireApp(baseConfig.Server, globalConfig, logger)
 	if err != nil {

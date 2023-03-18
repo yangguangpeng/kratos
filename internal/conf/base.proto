@@ -6,6 +6,7 @@ import "google/protobuf/duration.proto";
 message Base {
   Server server = 1;
   Apollo apollo = 2;
+  string env = 3;
 }
 
 message Server {
