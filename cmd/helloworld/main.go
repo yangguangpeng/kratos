@@ -1,21 +1,17 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/metadata"
-	"github.com/go-kratos/kratos/v2/middleware/tracing"
-	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/syyongx/php2go"
 	"helloworld/internal/conf"
 	"helloworld/pkg/apollo"
 	"helloworld/pkg/global"
+	"helloworld/pkg/global/globalLog"
 	"os"
 
 	_ "go.uber.org/automaxprocs"
@@ -72,35 +68,11 @@ func main() {
 
 	globalConfig := apollo.GetConfig(baseConfig.GetApollo())
 
-	//日志开始
-	time := php2go.Time()
-	logPath := `_autoGeneration/logs/` + php2go.Date(`2006-01`, time)
-	if ok, _ := php2go.IsDir(logPath); !ok {
-		err := os.MkdirAll(logPath, 0666)
-		if err != nil {
-			panic(err)
-		}
+	logger, logerror := globalLog.New()
+	if logerror != nil {
+		panic(logerror)
 	}
-	logFileNameSuffix := `_` + php2go.Date(`02`, time)
-	logFileName := `test` + logFileNameSuffix + `.log`
-	logFile := logPath + `/` + logFileName
-	//文件日志：
-	_, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		return
-	}
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"defaultCaller", log.DefaultCaller,
-		"caller", log.Caller,
-		"service.id", 1,
-		"service.name", 1,
-		"service.version", 1,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-		//"diy.trace" ,diy(),
-	)
-	//日志结束
+
 	global.Initial(baseConfig)
 
 	app, cleanup, err := wireApp(baseConfig.Server, globalConfig, logger)
@@ -110,28 +82,7 @@ func main() {
 	defer cleanup()
 
 	//start and wait for stop signal
-	if err := app.Run(); err != nil {
+	if err = app.Run(); err != nil {
 		panic(err)
-	}
-}
-
-func GetTraceID() log.Valuer {
-	return func(ctx context.Context) interface{} {
-		if header, ok := transport.FromServerContext(ctx); ok {
-			return header.RequestHeader().Get(`Mytraceid`)
-		}
-		if md, ok := metadata.FromServerContext(ctx); ok {
-			return md.Get("Mytraceid")
-		}
-		return "nothing"
-	}
-}
-
-func diy() log.Valuer {
-	return func(ctx context.Context) interface{} {
-		if header, ok := transport.FromServerContext(ctx); ok {
-			return header.RequestHeader().Get(`Mytraceid`)
-		}
-		return ``
 	}
 }

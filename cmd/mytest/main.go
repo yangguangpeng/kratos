@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"os"
 )
 
 func main() {
 
-	h := fmt.Sprintf("%x", [16]byte{123})
-	fmt.Println(h)
-	return
+	dir, _ := os.Getwd()
+	fmt.Println(dir)
 
 }
