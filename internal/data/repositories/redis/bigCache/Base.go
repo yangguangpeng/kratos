@@ -9,5 +9,10 @@ type Base struct {
 }
 
 func (t *Base) Init() {
-	t.BaseRedis.RedisPool = toolRedis.GetPool("bigCache", 0)
+	t.BaseRedis.RedisPool = toolRedis.GetPool("bigCacheMaster", 0)
+
+}
+
+func (t *Base) UseSlave() {
+	t.BaseRedis.RedisPool = toolRedis.GetPool("bigCacheSlave", 0)
 }

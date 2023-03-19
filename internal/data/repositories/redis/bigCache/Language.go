@@ -3,15 +3,14 @@ package bigCache
 import (
 	redis "helloworld/pkg/cache/toolRedis"
 	"strconv"
-	"strings"
 )
 
-type Language struct {
+type User struct {
 	Base
 }
 
-func LanguageInstance() *Language {
-	instance := &Language{
+func UserInstance() *User {
+	instance := &User{
 		Base{
 			BaseRedis: redis.BaseRedis{
 				TTL:           -1,
@@ -26,12 +25,17 @@ func LanguageInstance() *Language {
 }
 
 // Init 真正的keyName的获取会比较复杂
-func (t *Language) Init() {
+func (t *User) Init() {
 	t.Base.Init()
 }
 
+func (t *User) UseSlave() *User {
+	t.Base.UseSlave()
+	return t
+}
+
 //SetKeyName 通过本方法，构建真实的 key
-func (t *Language) SetKeyName(name string, langAppId int, lang string) *Language {
-	t.BaseRedis.KeyName = `lang_item_` + strconv.Itoa(langAppId) + `_` + strings.ToLower(lang) + `_` + name
+func (t *User) SetKeyName(userId int64) *User {
+	t.BaseRedis.KeyName = `user_id:` + strconv.Itoa(int(userId))
 	return t
 }
