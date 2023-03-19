@@ -1,4 +1,4 @@
-package model
+package test
 
 // DcGoods [...]
 type DcGoods struct {

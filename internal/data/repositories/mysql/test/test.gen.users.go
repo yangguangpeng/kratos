@@ -1,4 +1,4 @@
-package model
+package test
 
 import (
 	"context"
