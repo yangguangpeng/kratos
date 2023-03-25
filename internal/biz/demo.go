@@ -5,6 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
+	"github.com/gomodule/redigo/redis"
 	v1 "helloworld/api/helloworld/v1"
 	"helloworld/internal/data/repositories/redis/bigCache"
 	"strconv"
@@ -30,7 +31,10 @@ func NewDemoUsecase(repo DemoRepo, logger log.Logger) *DemoUsecase {
 
 //实现业务逻辑的层
 func (du *DemoUsecase) GetFormation(ctx context.Context, userID int64) (string, error) {
-	bigCache.UserInstance().UseSlave().SetKeyName(userID).Get()
+	du.log.WithContext(ctx).Info(`userid:` + strconv.Itoa(int(userID)))
+	resStr, _ := redis.String(bigCache.UserInstance().UseSlave().SetKeyName(userID).Get())
+	du.log.WithContext(ctx).Info(`res:` + resStr)
+	return resStr, nil
 	//traceId := `init`
 	//if header, ok := transport.FromServerContext(ctx); ok {
 	//	traceId = header.RequestHeader().Get(`Mytraceid`)

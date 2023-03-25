@@ -12,6 +12,7 @@ import (
 	"helloworld/pkg/apollo"
 	"helloworld/pkg/global"
 	"helloworld/pkg/global/globalLog"
+	toolSentry "helloworld/pkg/sentry"
 	"os"
 
 	_ "go.uber.org/automaxprocs"
@@ -74,6 +75,13 @@ func main() {
 	}
 
 	global.Initial(baseConfig)
+
+	// sentry, 所有go框架共用同一个dsn
+	toolSentry := &toolSentry.InitSentry{
+		Dsn: `conf.Sentry.Dsn`,
+	}
+	toolSentry.Init(`conf.ProjectName`)
+	defer toolSentry.Quit()
 
 	app, cleanup, err := wireApp(baseConfig.Server, globalConfig, logger)
 	if err != nil {

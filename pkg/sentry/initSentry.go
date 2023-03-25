@@ -23,6 +23,7 @@ type InitSentry struct {
 }
 
 func (config *InitSentry) Init(message string) {
+	return
 	InitSentryInstance = config
 
 	config.systemQuit = make(chan int, 1)

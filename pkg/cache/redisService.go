@@ -47,9 +47,10 @@ func (r *RedisService) initRedis() {
 	redisInfo := toolRedis.RedisSchema{}
 	var schemaSlice []toolRedis.RedisItemSchema
 	bigCacheMaster := r.options.config.GetRedis().GetBigCache().GetMaster()
+	r.options.log.Info(`bigCacheMaster.GetHost()`, bigCacheMaster.GetHost())
 	schemaSlice = append(schemaSlice, toolRedis.RedisItemSchema{
-		Host: bigCacheMaster.GetHost(),
-		Port: int(bigCacheMaster.GetPort()),
+		Host: `127.0.0.1`,
+		Port: 6379,
 	})
 	redisInfo[BIG_CACHE_MASTER] = schemaSlice
 	// redis连接池中间件，仅单节点

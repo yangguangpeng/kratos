@@ -12,7 +12,9 @@ import (
 func New() (logger log.Logger, err error) {
 	dir, _ := os.Getwd()
 	time := php2go.Time()
-	logPath := dir + global.AUTO_GENERATION_PATH + global.LOG_PATH + php2go.Date(`2006-01`, time)
+	logPath := dir + global.AUTO_GENERATION_PATH + `/` +
+		global.LOG_PATH + `/` +
+		php2go.Date(`2006-01`, time) + `/`
 	if ok, _ := php2go.IsDir(logPath); !ok {
 		err = os.MkdirAll(logPath, 0666)
 		if err != nil {
