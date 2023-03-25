@@ -1,1 +1,0 @@
-{"appId":"sgxx1","cluster":"","namespaceName":"mysql","releaseKey":"","configurations":{"songguo.db_name":"test","songguo.master.host":"127.0.0.1","songguo.master.password":"root","songguo.master.port":"3306","songguo.master.username":"root","songguo.slave.host":"127.0.0.1","songguo.slave.port":"3307","songguoxxx.master.host":"127.0.0.1","songguoxxx.master.port":"3306"}}

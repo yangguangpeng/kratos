@@ -13,7 +13,7 @@ import (
 func New() (logger log.Logger, err error) {
 
 	stdout := os.Stdout
-	if envFlag.Instance.IsEnvMode() {
+	if envFlag.Instance.IsEnvPro() {
 		stdout, err = getLogFile()
 	}
 	if err != nil {
