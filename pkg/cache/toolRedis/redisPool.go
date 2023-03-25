@@ -1,9 +1,10 @@
 package toolRedis
 
 import (
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/gomodule/redigo/redis"
 	toolSentry "helloworld/pkg/sentry"
-	"log"
+	"strconv"
 	"time"
 )
 
@@ -17,6 +18,7 @@ type RedisPool struct {
 	config    RedisItemSchema
 	redisName string
 	seq       int
+	Log       *log.Helper
 }
 
 func (t *RedisPool) Pool() *redis.Pool {
@@ -64,7 +66,7 @@ func (t *RedisPool) connect(retryTimes int) {
 		IdleTimeout: time.Duration(config.IdleTimeout) * time.Second,
 		Wait:        config.Wait,
 		Dial: func() (redis.Conn, error) {
-			c, err := redis.Dial("tcp", config.Host+":"+config.Port)
+			c, err := redis.Dial("tcp", config.Host+":"+strconv.Itoa(config.Port))
 			if err != nil {
 				return nil, err
 			}
@@ -111,7 +113,7 @@ func (t *RedisPool) connect(retryTimes int) {
 	}
 
 	if err != nil {
-		log.Println(err)
+		t.Log.Info(err)
 		toolSentry.Error(err)
 		t.connect(retryTimes - 1)
 		return

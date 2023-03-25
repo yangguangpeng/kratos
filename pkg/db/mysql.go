@@ -89,8 +89,6 @@ func (m *Mysql) GetSlave() {
 
 }
 
-func (m *Mysql) Cleanup() func() {
-	return func() {
-		m.toolMysql.Close()
-	}
+func (m *Mysql) Close() {
+	m.toolMysql.Close()
 }

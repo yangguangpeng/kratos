@@ -1,7 +1,7 @@
 package toolRedis
 
 import (
-	"log"
+	"github.com/go-kratos/kratos/v2/log"
 	"time"
 )
 
@@ -9,6 +9,7 @@ type InitRedis struct {
 	RedisInfo           RedisSchema
 	SystemQuit          chan int
 	HealthCheckDuration int
+	Log                 *log.Helper
 }
 
 func (config *InitRedis) Init() {
@@ -25,7 +26,7 @@ func (config *InitRedis) Init() {
 		InitRedisPool(redisName, len(connectionInfos))
 
 		for index, connectionInfo := range connectionInfos {
-			SetRedisPool(connectionInfo, redisName, index)
+			SetRedisPool(connectionInfo, redisName, index, config.Log)
 		}
 	}
 
@@ -34,7 +35,7 @@ func (config *InitRedis) Init() {
 
 func (config *InitRedis) Quit() {
 	config.SystemQuit <- 1
-	log.Println("InitRedis.Quit() 退出成功")
+	config.Log.Info("InitRedis.Quit() 退出成功")
 }
 
 func (config *InitRedis) Close() {
@@ -44,7 +45,7 @@ func (config *InitRedis) Close() {
 			CloseRedisPool(redisName, index)
 		}
 	}
-	log.Println("InitRedis.Close exited")
+	config.Log.Info("InitRedis.Close exited")
 }
 
 // HealthCheck 健康检查
@@ -60,7 +61,7 @@ func (config *InitRedis) HealthCheck() {
 	select {
 	case <-config.SystemQuit:
 		config.Close()
-		log.Println("InitRedis.healthCheck exited")
+		config.Log.Info("InitRedis.healthCheck exited")
 		return
 
 	case <-time.After(time.Duration(config.HealthCheckDuration) * time.Millisecond):

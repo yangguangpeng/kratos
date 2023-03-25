@@ -2,7 +2,7 @@ package toolRedis
 
 type RedisItemSchema struct {
 	Host                      string
-	Port                      string
+	Port                      int
 	Password                  string
 	Database                  int
 	MaxIdle                   int

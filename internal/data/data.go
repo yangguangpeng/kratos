@@ -2,6 +2,7 @@ package data
 
 import (
 	"helloworld/internal/conf"
+	"helloworld/pkg/cache"
 	"helloworld/pkg/db"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -22,9 +23,12 @@ func NewData(bs *conf.Bootstrap, logger log.Logger) (*Data, func(), error) {
 	l := log.NewHelper(log.With(logger))
 
 	mysqldb := db.New(db.WithConfig(bs), db.WithLog(l))
+	redisService := cache.New(cache.WithConfig(bs), cache.WithLog(l))
 
-	cleanup := mysqldb.Cleanup()
-
+	cleanup := func() {
+		mysqldb.Close()
+		redisService.Quit()
+	}
 	return &Data{
 		db: mysqldb,
 	}, cleanup, nil

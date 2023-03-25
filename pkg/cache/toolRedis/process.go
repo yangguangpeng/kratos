@@ -1,6 +1,7 @@
 package toolRedis
 
 import (
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/gomodule/redigo/redis"
 	"sync"
 )
@@ -48,11 +49,11 @@ func InitRedisPool(redisName string, length int) {
 	allRedisPools[redisName] = make([]*RedisPool, length)
 }
 
-func SetRedisPool(config RedisItemSchema, redisName string, key int) {
+func SetRedisPool(config RedisItemSchema, redisName string, key int, log *log.Helper) {
 	mutexRedisPools.Lock()
 	defer mutexRedisPools.Unlock()
 
-	allRedisPools[redisName][key] = &RedisPool{}
+	allRedisPools[redisName][key] = &RedisPool{Log: log}
 
 	allRedisPools[redisName][key].Init(config, redisName, key)
 }

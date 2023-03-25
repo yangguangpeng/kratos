@@ -6,6 +6,7 @@ option go_package = "internal/conf;conf";
 message Bootstrap {
     Application application = 1;
     Mysql mysql = 2;
+    Redis redis = 3;
 }
 
 message Application {
@@ -18,12 +19,12 @@ message Mysql {
 }
 
 message Songguo {
-  Master master = 1;
-  Slave slave = 2;
+  MysqlUnit master = 1;
+  MysqlUnit slave = 2;
   string db_name = 3;
 }
 
-message Master{
+message MysqlUnit{
   string host = 1;
   int64 port = 2;
   string username = 3;
@@ -33,26 +34,19 @@ message Master{
   int64 set_conn_max_lifetime = 7;
 }
 
-message Slave{
+
+message Redis {
+  BigCache bigCache = 1;
+}
+
+message BigCache {
+    RedisItemSchema master = 1;
+    RedisItemSchema slave = 2;
+}
+
+message RedisItemSchema{
   string host = 1;
   int64 port = 2;
-  string username = 3;
-  string password = 4;
 }
-//message Data {
-//  message Database {
-//    string driver = 1;
-//    string source = 2;
-//  }
-//  message Redis {
-//    string network = 1;
-//    string addr = 2;
-//    google.protobuf.Duration read_timeout = 3;
-//    google.protobuf.Duration write_timeout = 4;
-//    int64 max_idle = 5;
-//  }
-//  Database database = 1;
-//  Redis redis = 2;
-//}
 
 
