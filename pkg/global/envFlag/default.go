@@ -28,6 +28,10 @@ func (t *Handler) IsEnvPro() bool {
 	return t.env == EnvPro
 }
 
-func (t Handler) IsUnitTestMode() bool {
+func (t *Handler) IsUnitTestMode() bool {
 	return t.env == EnvUniTest
+}
+
+func (t *Handler) IsEnvMode() bool {
+	return t.env == EnvDev
 }

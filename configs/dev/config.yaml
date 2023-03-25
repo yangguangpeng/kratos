@@ -12,3 +12,4 @@ apollo:
   namespace: application,mysql,redis
   secret: 68b257a5cf2643438614f0c4e9750fe1
   backup_path: _autoGeneration/apollo
+env: dev

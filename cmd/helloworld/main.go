@@ -69,12 +69,12 @@ func main() {
 
 	globalConfig := apollo.GetConfig(baseConfig.GetApollo())
 
+	global.Initial(baseConfig)
+
 	logger, logerror := globalLog.New()
 	if logerror != nil {
 		panic(logerror)
 	}
-
-	global.Initial(baseConfig)
 
 	// sentry, 所有go框架共用同一个dsn
 	toolSentry := &toolSentry.InitSentry{
