@@ -15,7 +15,6 @@ import (
 	"helloworld/pkg/global/globalLog"
 	toolSentry "helloworld/pkg/sentry"
 	"os"
-	"time"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"
@@ -45,7 +44,6 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 			gs,
 			hs,
 		),
-		kratos.StopTimeout(30*time.Second),
 	)
 }
 
