@@ -1,6 +1,7 @@
 package toolRedis
 
 import (
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/gomodule/redigo/redis"
 	toolSentry "helloworld/pkg/sentry"
@@ -26,6 +27,7 @@ func (t *RedisPool) Pool() *redis.Pool {
 }
 
 func (t *RedisPool) Close() {
+	fmt.Println(`redis close ....`)
 	for i := 0; i < 10; i++ {
 		if t.pool == nil {
 			continue

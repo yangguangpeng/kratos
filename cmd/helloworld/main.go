@@ -8,14 +8,14 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	_ "go.uber.org/automaxprocs"
 	"helloworld/internal/conf"
 	"helloworld/pkg/apollo"
 	"helloworld/pkg/global"
 	"helloworld/pkg/global/globalLog"
 	toolSentry "helloworld/pkg/sentry"
 	"os"
-
-	_ "go.uber.org/automaxprocs"
+	"time"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"
@@ -45,6 +45,7 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 			gs,
 			hs,
 		),
+		kratos.StopTimeout(30*time.Second),
 	)
 }
 

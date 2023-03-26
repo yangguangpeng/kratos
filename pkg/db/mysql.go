@@ -40,33 +40,36 @@ func New(opts ...Option) *Mysql {
 		opt(&o)
 	}
 	m := &Mysql{options: &o}
-	//m.initMysql()
+	m.initMysql()
 	return m
 }
 
 func (m *Mysql) initMysql() {
+	fmt.Println(`Mysql initMysql...`)
 	o := m.options
-	config := m.options.config
-	songguoMaster := config.GetMysql().Songguo.GetMaster()
+	//config := m.options.config
+	//songguoMaster := config.GetMysql().Songguo.GetMaster()
 	mysqlConfig := make(map[string]toolMySQL.MySQLItemSchema)
 	mysqlConfig[SONGGUO_MASTER] = toolMySQL.MySQLItemSchema{
 		Dsn:                  m.makeSongguoMasterDSN(),
 		MaxRetryConnectTimes: 3,
-		SetMaxIdleConns:      songguoMaster.GetSetMaxIdleConns(),
-		SetMaxOpenConns:      songguoMaster.GetSetMaxOpenConns(),
-		SetConnMaxLifetime:   songguoMaster.GetSetConnMaxLifetime(),
+		//SetMaxIdleConns:      songguoMaster.GetSetMaxIdleConns(),
+		//SetMaxOpenConns:      songguoMaster.GetSetMaxOpenConns(),
+		//SetConnMaxLifetime:   songguoMaster.GetSetConnMaxLifetime(),
 	}
 
 	toolMysql := &toolMySQL.InitMySQL{
 		MySQLInfo: mysqlConfig,
 		Log:       o.log}
-
+	fmt.Println(`Mysql initMysql 2222...`)
 	toolMysql.Init()
 	m.toolMysql = toolMysql
 }
 
 func (m *Mysql) makeSongguoMasterDSN() string {
 	o := m.options
+	return fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s`, `root`,
+		`root`, `127.0.0.1`, 3306, `test`)
 	songguoMysql := o.config.GetMysql().GetSongguo()
 	songguoMaster := songguoMysql.GetMaster()
 	return fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s`, songguoMaster.GetUsername(),

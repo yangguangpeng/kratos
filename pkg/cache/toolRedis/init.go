@@ -1,6 +1,7 @@
 package toolRedis
 
 import (
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"time"
 )
@@ -34,6 +35,7 @@ func (config *InitRedis) Init() {
 }
 
 func (config *InitRedis) Quit() {
+	fmt.Println(`redis quit...`)
 	config.SystemQuit <- 1
 	config.Log.Info("InitRedis.Quit() 退出成功")
 }
@@ -51,6 +53,7 @@ func (config *InitRedis) Close() {
 // HealthCheck 健康检查
 func (config *InitRedis) HealthCheck() {
 
+	fmt.Println(`HealthCheck.....`)
 	for redisName, connectionInfos := range config.RedisInfo {
 		for index, _ := range connectionInfos {
 			Reconnection(redisName, index)
