@@ -12,20 +12,7 @@ type bootstrap struct {
 		Name    string `json:"name"`
 		Version string `json:"version"`
 		Author  string `json:"author"`
-		ID      int64  `json:"id"`
 	} `json:"application"`
-	//Redis struct {
-	//	Bigcache BigCache `json:"bigcache"`
-	//} `json:"redis"`
-}
-
-type BigCache struct {
-	Master Master `json:"master,omitempty"`
-}
-
-type Master struct {
-	Host string `json:"host"`
-	Port int64  `json:"port"`
 }
 
 func main() {
@@ -33,29 +20,29 @@ func main() {
 	c := config.New(
 		config.WithSource(
 			apollo.NewSource(
-				apollo.WithAppID("sgxx1"),
-				//apollo.WithCluster("default"),
-				apollo.WithEndpoint("http://81.68.181.139:8080/"),
+				apollo.WithAppID("pay123456"),
+				apollo.WithCluster("default"),
+				apollo.WithEndpoint("http://81.68.181.139:8080"),
 				apollo.WithNamespace("application"),
-				//apollo.WithEnableBackup(),
-				apollo.WithSecret("7b380aefcb9348e59a49a3ba477d256b"),
+				apollo.WithEnableBackup(),
+				apollo.WithSecret("45450aff807242e4b04e2618a5d5e984"),
 			),
 		),
 	)
 	var bc bootstrap
 	if err := c.Load(); err != nil {
-		panic(err)
+		//panic(err)
 	}
 
 	scan(c, &bc)
 
-	//value(c, "application")
+	value(c, "application")
 	//value(c, "application.name")
 	//value(c, "event.array")
 	//value(c, "demo.deep")
 
-	//watch(c, "application")
-	//<-make(chan struct{})
+	watch(c, "application")
+	<-make(chan struct{})
 
 }
 func scan(c config.Config, bc *bootstrap) {
