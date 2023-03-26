@@ -31,6 +31,7 @@ func (t *InitMySQL) Init() {
 	fmt.Println(`InitMySQL init...`)
 	t.systemQuit = make(chan struct{}, 1)
 	t.systemQuitFinished = make(chan struct{}, 1)
+	LogHelp = t.Log
 	t.connect()
 	go t.HealthCheck(maxHealthCheckDuration)
 }
