@@ -1,0 +1,28 @@
+package main
+
+import (
+	"fmt"
+	"github.com/apolloconfig/agollo/v4"
+	"github.com/apolloconfig/agollo/v4/env/config"
+)
+
+func main() {
+	c := &config.AppConfig{
+		AppID:          "ms",
+		Cluster:        "dev",
+		IP:             "http://192.168.1.5:8080",
+		NamespaceName:  "application",
+		IsBackupConfig: true,
+		Secret:         "bbfbc03b62534917aa41d20337db2f9b",
+	}
+
+	client, _ := agollo.StartWithConfig(func() (*config.AppConfig, error) {
+		return c, nil
+	})
+	fmt.Println("初始化Apollo配置成功")
+
+	//Use your apollo key to test
+	cache := client.GetConfigCache(c.NamespaceName)
+	value, _ := cache.Get("name")
+	fmt.Println(value)
+}

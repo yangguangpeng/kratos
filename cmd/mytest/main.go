@@ -13,6 +13,14 @@ type bootstrap struct {
 		Version string `json:"version"`
 		Author  string `json:"author"`
 	} `json:"application"`
+	Test struct {
+		Address string `json:"address"`
+		Tls     struct {
+			Enable   bool   `json:"enable"`
+			CertFile string `json:"cert_file"`
+			KeyFile  string `json:"key_file"`
+		} `json:"tls"`
+	} `json:"test"`
 }
 
 func main() {
@@ -20,12 +28,12 @@ func main() {
 	c := config.New(
 		config.WithSource(
 			apollo.NewSource(
-				apollo.WithAppID("pay123456"),
-				apollo.WithCluster("default"),
-				apollo.WithEndpoint("http://81.68.181.139:8080"),
-				apollo.WithNamespace("application"),
-				apollo.WithEnableBackup(),
-				apollo.WithSecret("45450aff807242e4b04e2618a5d5e984"),
+				apollo.WithAppID("ms"),
+				apollo.WithCluster("dev"),
+				apollo.WithEndpoint("http://192.168.1.5:8080"),
+				apollo.WithNamespace("application,test"),
+				//apollo.WithEnableBackup(),
+				apollo.WithSecret("bbfbc03b62534917aa41d20337db2f9b"),
 			),
 		),
 	)
@@ -37,7 +45,7 @@ func main() {
 	scan(c, &bc)
 
 	value(c, "application")
-	//value(c, "application.name")
+	value(c, "application.name")
 	//value(c, "event.array")
 	//value(c, "demo.deep")
 
@@ -47,9 +55,11 @@ func main() {
 }
 func scan(c config.Config, bc *bootstrap) {
 	err := c.Scan(bc)
+	//bc.Test.Address = `sdfsdfsdf`
 	fmt.Printf("=========== scan result =============\n")
 	fmt.Printf("err: %v\n", err)
 	fmt.Printf("cfg: %+v\n\n", bc)
+
 }
 
 func value(c config.Config, key string) {
