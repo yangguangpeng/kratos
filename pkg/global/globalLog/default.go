@@ -33,7 +33,8 @@ func New() (logger log.Logger, err error) {
 }
 
 func getLogFile() (*os.File, error) {
-	dir, _ := os.Getwd()
+
+	dir := global.GetAppPath()
 	time := php2go.Time()
 	logPath := dir + `/` + global.AUTO_GENERATION_PATH + `/` +
 		global.LOG_PATH + `/` +
