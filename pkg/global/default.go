@@ -14,7 +14,7 @@ func Initial(baseConf conf.Base) {
 }
 
 func GetAppPath() string {
-	appPath := os.Getenv(`APP_PATH`)
+	appPath := os.Getenv(`MS_APP_PATH`)
 	if appPath == `` {
 		appPath, _ = os.Getwd()
 	}

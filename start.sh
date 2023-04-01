@@ -22,5 +22,5 @@ fi
 
 cp -f "./configs/"$env"/config.yaml" "configs/config.yaml"
 echo "=====================环境:"$env"========================="
-export APP_PATH=$(pwd)
+export MS_APP_PATH=$(pwd)
 kratos run
