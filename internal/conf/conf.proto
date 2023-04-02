@@ -36,7 +36,7 @@ message MysqlUnit{
 
 
 message Redis {
-  BigCache big_cache = 1;
+  BigCache bigcache = 1;
 }
 
 message BigCache {

@@ -5,23 +5,24 @@ import (
 	"github.com/go-kratos/kratos/contrib/config/apollo/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/log"
+	"helloworld/internal/conf"
 )
 
-type bootstrap struct {
-	Application struct {
-		Name    string `json:"name"`
-		Version string `json:"version"`
-		Author  string `json:"author"`
-	} `json:"application"`
-	Test struct {
-		Address string `json:"address"`
-		Tls     struct {
-			Enable   bool   `json:"enable"`
-			CertFile string `json:"cert_file"`
-			KeyFile  string `json:"key_file"`
-		} `json:"tls"`
-	} `json:"test"`
-}
+//type bootstrap struct {
+//	Application struct {
+//		Name    string `json:"name"`
+//		Version string `json:"version"`
+//		Author  string `json:"author"`
+//	} `json:"application"`
+//	Test struct {
+//		Address string `json:"address"`
+//		Tls     struct {
+//			Enable   bool   `json:"enable"`
+//			CertFile string `json:"cert_file"`
+//			KeyFile  string `json:"key_file"`
+//		} `json:"tls"`
+//	} `json:"test"`
+//}
 
 func main() {
 
@@ -31,13 +32,13 @@ func main() {
 				apollo.WithAppID("ms"),
 				apollo.WithCluster("dev"),
 				apollo.WithEndpoint("http://192.168.1.5:8080"),
-				apollo.WithNamespace("application,test"),
+				apollo.WithNamespace("application,redis,test"),
 				//apollo.WithEnableBackup(),
 				apollo.WithSecret("bbfbc03b62534917aa41d20337db2f9b"),
 			),
 		),
 	)
-	var bc bootstrap
+	var bc conf.Bootstrap
 	if err := c.Load(); err != nil {
 		//panic(err)
 	}
@@ -53,7 +54,7 @@ func main() {
 	<-make(chan struct{})
 
 }
-func scan(c config.Config, bc *bootstrap) {
+func scan(c config.Config, bc *conf.Bootstrap) {
 	err := c.Scan(bc)
 	//bc.Test.Address = `sdfsdfsdf`
 	fmt.Printf("=========== scan result =============\n")

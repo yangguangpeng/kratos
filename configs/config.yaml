@@ -6,10 +6,11 @@ server:
     addr: 0.0.0.0:8080
     timeout: 1s
 apollo:
-  app_id: sgxx1
-  cluster: default
-  endpoint: http://81.68.181.139:8080
+  app_id: ms
+  cluster: dev
+  endpoint: http://192.168.1.5:8080
   namespace: application,mysql,redis
-  secret: 68b257a5cf2643438614f0c4e9750fe1
+  secret: bbfbc03b62534917aa41d20337db2f9b
   backup_path: _autoGeneration/apollo
 env: dev
+

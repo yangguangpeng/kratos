@@ -16,6 +16,7 @@ func New() (logger log.Logger, err error) {
 	if envFlag.Instance.IsEnvPro() {
 		stdout, err = getLogFile()
 	}
+	//stdout, err = getLogFile()
 	if err != nil {
 		return nil, err
 	}

@@ -68,15 +68,26 @@ func (m *Mysql) initMysql() {
 
 func (m *Mysql) makeSongguoMasterDSN() string {
 	o := m.options
-	return fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s`, `root`,
-		`admin123`, `127.0.0.1`, 3306, `test`)
+
+	//return fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s`, `root`,
+	//	`admin123`, `127.0.0.1`, 3306, `test`)
 	songguoMysql := o.config.GetMysql().GetSongguo()
 	songguoMaster := songguoMysql.GetMaster()
-	return fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s`, songguoMaster.GetUsername(),
-		songguoMaster.GetPassword(),
-		songguoMaster.GetHost(),
-		songguoMaster.GetPort(),
-		songguoMysql.GetDbName())
+
+	username := songguoMaster.GetUsername()
+	password := songguoMaster.GetPassword()
+	host := songguoMaster.GetHost()
+	port := songguoMaster.GetPort()
+	dbname := songguoMysql.GetDbName()
+	if username == `` || password == `` || host == `` || port == 0 || dbname == `` {
+		m.options.log.Error(`读取配置songguoMaster失败`)
+		return ``
+	}
+	return fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s`, username,
+		password,
+		host,
+		port,
+		dbname)
 }
 
 func (m *Mysql) GetSongguoMaster() *gorm.DB {

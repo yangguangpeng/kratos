@@ -26,8 +26,8 @@ func NewData(bs *conf.Bootstrap, logger log.Logger) (*Data, func(), error) {
 	redisService := cache.New(cache.WithConfig(bs), cache.WithLog(l))
 
 	cleanup := func() {
-		mysqldb.Close()
-		redisService.Quit()
+		defer mysqldb.Close()
+		defer redisService.Quit()
 	}
 	return &Data{
 		db: mysqldb,

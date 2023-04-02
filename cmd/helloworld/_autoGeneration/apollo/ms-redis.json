@@ -1,0 +1,1 @@
+{"appId":"ms","cluster":"default","namespaceName":"redis","releaseKey":"20230402114801-87df24aa9a71b52b","configurations":{"bigcache.master.host":"127.0.0.1","bigcache.master.port":"6379"}}

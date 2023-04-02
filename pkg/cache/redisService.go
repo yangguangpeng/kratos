@@ -46,7 +46,17 @@ func (r *RedisService) initRedis() {
 
 	redisInfo := toolRedis.RedisSchema{}
 	var schemaSlice []toolRedis.RedisItemSchema
-	bigCacheMaster := r.options.config.GetRedis().GetBigCache().GetMaster()
+	bigCacheMaster := r.options.config.GetRedis().GetBigcache().GetMaster()
+	bigCacheMasterHost := bigCacheMaster.GetHost()
+	bigCacheMasterPort := bigCacheMaster.GetPort()
+	if bigCacheMasterHost == `` {
+		r.options.log.Error(`读取配置bigCacheMaster HOST失败`)
+		return
+	}
+	if bigCacheMasterPort == 0 {
+		r.options.log.Error(`读取配置bigCacheMaster PORT失败`)
+		return
+	}
 	r.options.log.Info(`bigCacheMaster.GetHost()`, bigCacheMaster.GetHost())
 	schemaSlice = append(schemaSlice, toolRedis.RedisItemSchema{
 		Host: `127.0.0.1`,
